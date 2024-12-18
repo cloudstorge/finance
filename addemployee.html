@@ -1,0 +1,88 @@
+<div class="m-3 p-3">
+    <form class="p-5 text-center" id="employeeForm">
+        <div class="form-row text-left">
+            <div class="col-md-4 mb-3">
+                <label for="firstname">First Name</label>
+                <input type="text" class="form-control" id="firstname" value="" required>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label for="mobile">Mobile</label>
+                <input type="number" class="form-control" id="mobile" value="" required>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label for="password">Password</label>
+                <input type="password" class="form-control" id="password" value="" required>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label for="role">Role</label>
+                <select class="custom-select" id="role" required>
+                    <option selected disabled value="">Select...</option>
+                    <option value="1">Employee</option>
+                    <option value="2">Admin</option>
+                    <option value="3">Super Admin</option>
+                </select>
+            </div>
+        </div>
+        <button class="btn btn-primary btn-round" type="submit">Submit</button>
+    </form>
+  </div>
+  
+  <script>
+    // Handle form submission with AJAX
+    $("#employeeForm").on("submit", function (event) {
+        event.preventDefault(); // Prevent the default form submission
+  
+        // Get form values
+        var firstname = $("#firstname").val();
+        var mobile = $("#mobile").val();
+        var password = $("#password").val();
+        var role = $("#role").val();
+  
+        // Perform basic validation
+        if (firstname && mobile && password && role) {
+            // MD5 hash the password before sending it to the server
+            var hashedPassword = md5(password);
+  
+            // Prepare the data to be sent to the server
+            var formData = {
+                firstname: firstname,
+                mobile: mobile,
+                password: hashedPassword,
+                role: role
+            };
+  
+            // Send the form data to the PHP backend using AJAX
+            $.ajax({
+                url: "/fetch/add_employee.php",  // PHP script to process the data
+                type: "POST",
+                data: formData,
+                success: function (response) {
+                    var res = JSON.parse(response); // Parse the JSON response from the PHP script
+                    if (res.status === "success") {
+                        alert("Employee added successfully!");
+                        // Optionally reset the form after successful submission
+                        $("#employeeForm")[0].reset();
+                    } else {
+                        alert("Error: " + res.message); // Display error message if any
+                    }
+                },
+                error: function (xhr, status, error) {
+                    alert("Error: " + error); // Display error message if the AJAX request fails
+                }
+            });
+        } else {
+            alert("Please fill in all fields.");
+        }
+    });
+  
+  
+    // Simple MD5 implementation (if you don't have a library included)
+    function md5(str) {
+      // Here, you should include a proper MD5 hashing library
+      // For instance, you can use CryptoJS or an MD5 implementation like `js-md5`
+      // For now, it's a placeholder to prevent errors, and it will need to be replaced by a real MD5 hash function.
+  
+      return str; // Replace this line with a real MD5 hashing method.
+    }
+  </script>
+  
